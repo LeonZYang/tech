@@ -1339,8 +1339,8 @@ func preemptone(_p_ *p) bool {
 
 Gdead-- newproc --> Grunable -- execute --> Grunning --> goexit0 -> Gdead
 
-### 工作流程
-当调用go func的时候
+### 总结
+当调用go func的时候，大致流程如下
 
 ```mermaid
 graph LR
@@ -1354,3 +1354,8 @@ graph LR
    G状态更新为Grunning -- goexit --> 执行完毕G的状态变为Gdead
    
 ```
+
+
+### 参考资料
+1. https://segmentfault.com/a/1190000020254937
+2. https://blog.csdn.net/u010853261/article/details/84790392#35_sysmon_1026
