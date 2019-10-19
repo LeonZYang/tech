@@ -6,7 +6,7 @@ CSP模型的全称为Communicating Sequential Processes，是一个很强大的�
 ### 理解并发不是并行
 举个排队的例子，有两个队伍，但是只有1个窗口审核，是并发，如果有两个窗口则是并行，Golang里面就是并发
 
-### MGP
+MGP
 
 `M`指的是Machine，一个M关联了一个内核线程
 `P`指的是Processor，代表了M的上下文环境
