@@ -12,9 +12,9 @@
 * [深入理解Mutex](golang/mutex.md)
 * [深入理解Defer](golang/defer.md)
 * [深入理解Pool](golang/pool.md)
+* [深入理解Waitgroup](golang/waitgroup.md)
 
 ### 即将到来
-* 深入理解Waitgroup
 * 深入理解Reflect
 * 深入理解Unsafe
 * 深入理解GC

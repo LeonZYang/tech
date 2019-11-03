@@ -170,5 +170,19 @@ func slicecopy(to, fm slice, width uintptr) int {
 make 第二个参数是len，第三个参数是cap，如果不穿第三个参数，那么cap = len，所以就会有下面的输出
 
 
+### 其他
+slice切片的时候，可以设定切片后的cap
+
+```go
+    s := make([]uint16, 5)
+    s[0] = 1
+    s[1] = 2
+    s[2] = 3
+    s[3] = 4
+    s[4] = 5
+
+    // 5 就是新切片的cap，不能大于原始切片的cap，否则会报panic: runtime error: slice bounds out of range
+    v:= s[0:2:5]
+```
 
 
