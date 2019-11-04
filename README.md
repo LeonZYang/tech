@@ -13,6 +13,7 @@
 * [深入理解Defer](golang/defer.md)
 * [深入理解Pool](golang/pool.md)
 * [深入理解Waitgroup](golang/waitgroup.md)
+* [深入理解sync.Map](golang/syncmap.md)
 
 ### 即将到来
 * 深入理解Reflect
