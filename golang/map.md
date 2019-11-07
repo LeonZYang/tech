@@ -14,18 +14,18 @@ const(
     
     // topHash可能得值
     emptyRest      = 0 // 为空，并且在overflows也没有cell，初始状态
-	emptyOne       = 1 // 为空，已迁移到新的bucket
-	evacuatedX     = 2 // key/value已经变迁完毕，但是key都在bucket的前半部分
-	evacuatedY     = 3 // 同上，key在后半部分
-	evacuatedEmpty = 4 // 为空，bucket正在搬迁
+    emptyOne       = 1 // 为空，已迁移到新的bucket
+    evacuatedX     = 2 // key/value已经变迁完毕，但是key都在bucket    的前半部分
+    evacuatedY     = 3 // 同上，key在后半部分
+    evacuatedEmpty = 4 // 为空，bucket正在搬迁
     minTopHash     = 5 // 最小的值， h > emptyOne && h < minTopHash, 表明是正在搬迁
     
 
     //flag
     iterator     = 1 // 有迭代器正在请求buckets
-	oldIterator  = 2 // 有迭代器正在查询oldbuckets
-	hashWriting  = 4 // 一个goroutine正在写map
-	sameSizeGrow = 8 // 当前map正在增长到另一个map
+    oldIterator  = 2 // 有迭代器正在查询oldbuckets
+    hashWriting  = 4 // 一个goroutine正在写map
+    sameSizeGrow = 8 // 当前map正在增长到另一个map
 )
     
 ```
