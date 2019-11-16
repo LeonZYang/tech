@@ -83,7 +83,7 @@ type bmap struct{
 
 我们用一张图看下bmap是如何存储数据的
 注：tophash[0] 如果小于minTopHash, 就代表bucket的迁移状态
-下面tophash的0~7就代表topbits[0]~ topbits[7]对应的值
+下面tophash的0 ~ 7就代表topbits[0] ~ topbits[7]对应的值
 ![bmap](images/bmap.png)
 
 从上图看出bmap存储key/value的方式key/key/key/.../value/value/value..., 奇怪为什么不是key/value/key/value/...这种方式存储呢？
