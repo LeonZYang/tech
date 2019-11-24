@@ -44,6 +44,20 @@ object:
 从别的地方引用的一张内存管理图
 ![mem](images/mem.png)
 
+
+#### go内存结构
+
+![heap](images/mheap.png)
+总共分为3个区域，spans，bitmap和areaa
+
+##### mspan
+每个mspan对一个一个page
+![spans](images/spans.png)
+
+##### bitmap
+每个bitmap对应arena 4个指针的内存，相当于2bit对应1个指针大小的内存，两个2bit分别代表是否指针和是否应该扫描
+![bitmap](images/bitmap.png)
+
 #### size class
 每个mspan会按照SizeClass的大小分配成若干的object，每个object可以存储一个对象。并且使用allocBits表示object使用情况，mspan会按照上面的分配原则给object分配对象
 ```go
@@ -155,6 +169,8 @@ type mspan struct {
 
     // 分配位图，每一位代表是否已分配
 	allocBits  *gcBits
+
+	// 用于在gc的时候标记哪些对象存活，每次GC后gcmarkBits变成allocBits
 	gcmarkBits *gcBits
 
 	sweepgen    uint32
@@ -184,6 +200,11 @@ type mcache struct {
 	alloc [numSpanClasses]*mspan 
 }
 ```
+alloc的分布
+
+![alloc_mspan](images/alloc_mspan.png)
+
+span class分为scan和noscan，如果对象含有指针则分为scan，否则分配到noscan，这样在GC的时候，如果对应的是noscan，则不用再去bitmap中找对应的对象
 
 #### mcentral
 mcentral为每个mcache提供mspan， 每个mcentral保存未分配和已分批的span，当mcache没有合适或是空闲的mspan,就会从mcentral申请
