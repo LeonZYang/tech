@@ -20,13 +20,13 @@
 * [sql源码解读](golang/sql.md)
 * [深入理解GC](golang/gc.md)
 * [深入理解context](golang/context.md)
+* [深入理解RPC](golang/rpc.md)
 
 ### 即将到来
 * go程序启动
 * runtime
 * interface
 * http
-* context
-* rpc
+* gRPC
 
 ## Python
