@@ -30,3 +30,5 @@
 * gRPC
 
 ## Python
+
+*[理解装饰器](python/decorator.md)
