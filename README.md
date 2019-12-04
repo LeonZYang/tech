@@ -21,6 +21,7 @@
 * [深入理解GC](golang/gc.md)
 * [深入理解context](golang/context.md)
 * [深入理解RPC](golang/rpc.md)
+* [深入理解HTTP Client](golang/http_client.md)
 
 ### 即将到来
 * go程序启动
@@ -31,4 +32,12 @@
 
 ## Python
 
-*[理解装饰器](python/decorator.md)
+* [理解装饰器](python/decorator.md)
+* [理解生成器器](python/generator.md)
+
+### 即将到来
+* 元编程
+* 迭代器
+* asyncio
+* 类的继承
+
