@@ -13,56 +13,56 @@ Go是一门静态语言，我们可以使用反射对不同类型的对象进行
 首先我们看下Type的组成(下图中我们省略了一些字段)
 ```go
 type Type interface {
-    // 返回第i个方法，超过范围，则panic
+	// 返回第i个方法，超过范围，则panic
 	Method(int) Method
 
-    // 通过名称获取方法
+	// 通过名称获取方法
 	MethodByName(string) (Method, bool)
 
-    // 方法数量
+	// 方法数量
 	NumMethod() int
 
-    // 类型名
+	// 类型名
 	Name() string
 
-    // 返回包路径（完全路径）
+	// 返回包路径（完全路径）
 	PkgPath() string
 
-    // 类似unsafe.Sizeof
+	// 类似unsafe.Sizeof
 	Size() uintptr
 
-    // 字符串表示，可能包含短包名
+	// 字符串表示，可能包含短包名
 	String() string
 
-    // 类型
+	// 类型
 	Kind() Kind
 
-    // 如果该类型实现了u的接口，则返回true
+	// 如果该类型实现了u的接口，则返回true
 	Implements(u Type) bool
 
-    // 返回元素类型，如果kind不是slice,channel,map,pointer, 则painc
+	// 返回元素类型，如果kind不是slice,channel,map,pointer, 则painc
 	Elem() Type
 
-    // 第几个字段
+	// 第几个字段
 	Field(i int) StructField
 
 	FieldByIndex(index []int) StructField
 
-    // 根据name返回字段细腻系
+	// 根据name返回字段细腻系
 	FieldByName(name string) (StructField, bool)
 
 	FieldByNameFunc(match func(string) bool) (StructField, bool)
 
-    // 返回第i个参数类型
+	// 返回第i个参数类型
 	In(i int) Type
 
-    // 返回array类型的长度，如果不是，则panic
+	// 返回array类型的长度，如果不是，则panic
 	Len() int
 
-    // 返回field的数量
+	// 返回field的数量
 	NumField() int
 
-    // 返回参数的数量
+	// 返回参数的数量
 	NumIn() int
 }
 ```

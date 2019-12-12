@@ -288,7 +288,7 @@ func (c *Client) do(req *Request) (retres *Response, reterr error) {
 	uerr := func(err error) error {
 		// the body may have been closed already by c.send()
 		if !reqBodyClosed {
-            // closeBody 其实也是调用Body.Close
+			// closeBody 其实也是调用Body.Close
 			req.closeBody()
 		}
 		var urlStr string

@@ -73,17 +73,17 @@ func (p *Pool) Put(x interface{}) {
 pin的功能是绑定goroutine到固定P上，并且不允许抢占, 这里利用m.locks 标记
 ```go
 func (p *Pool) pin() *poolLocal {
-    // 返回绑定后P的id, 不允许抢占， 相关函数在runtime/proc.go中sync_runtime_procPin
+	// 返回绑定后P的id, 不允许抢占， 相关函数在runtime/proc.go中sync_runtime_procPin
 	pid := runtime_procPin()
-    // 本地pool的大小
-    s := atomic.LoadUintptr(&p.localSize)
-    // 本地的pool
-    l := p.local
-    // 当前的P有pool，直接返回poolLocal        
+	// 本地pool的大小
+	s := atomic.LoadUintptr(&p.localSize)
+	// 本地的pool
+	l := p.local
+	// 当前的P有pool，直接返回poolLocal        
 	if uintptr(pid) < s {
 		return indexLocal(l, pid)
-    }
-    // 需要重新分配，因为GOMAXPROCS在GC的时候改变了
+	}
+	// 需要重新分配，因为GOMAXPROCS在GC的时候改变了
 	return p.pinSlow()
 }
 ```
@@ -92,31 +92,31 @@ func (p *Pool) pin() *poolLocal {
 再次判断获取下poolLocal
 ```go
 func (p *Pool) pinSlow() *poolLocal {
-    // 解除抢占
+	// 解除抢占
 	runtime_procUnpin()
 	allPoolsMu.Lock()
 	defer allPoolsMu.Unlock()
 	pid := runtime_procPin()
-    // 当我们在绑定的时候，poolCleanup不会被调用
+	// 当我们在绑定的时候，poolCleanup不会被调用
 	s := p.localSize
-    l := p.local
-    // 再次判断下
+	l := p.local
+	// 再次判断下
 	if uintptr(pid) < s {
 		return indexLocal(l, pid)
-    }
-    // 走到这里，分两种情况：
-    // 1. Pool首次调用
-    // 2. GOMAXPROCS 发生改变了
+	}
+	// 走到这里，分两种情况：
+	// 1. Pool首次调用
+	// 2. GOMAXPROCS 发生改变了
 
-    // p.local为空，说明是新增的Pool，append到allPools
+	// p.local为空，说明是新增的Pool，append到allPools
 	if p.local == nil {
 		allPools = append(allPools, p)
 	}
 
-    // 如果GOMAXPROCS在GC的时候改变了，我们会重新分配, GOMAXPROCS(0)会返回当前的Procs
+	// 如果GOMAXPROCS在GC的时候改变了，我们会重新分配, GOMAXPROCS(0)会返回当前的Procs
 	size := runtime.GOMAXPROCS(0)
-    local := make([]poolLocal, size)
-    // 存储local和localsize
+	local := make([]poolLocal, size)
+	// 存储local和localsize
 	atomic.StorePointer(&p.local, unsafe.Pointer(&local[0]))
 	atomic.StoreUintptr(&p.localSize, uintptr(size))     
 	return &local[pid]
@@ -132,8 +132,8 @@ func poolCleanup() {
     // 1. 防止错误的保留整个Pools
     // 2. 如果GC和l.shared Put/Get同时发生，那么就会保留整个Pool，下个内存的消耗将增加一倍
 	for i, p := range allPools {
-        allPools[i] = nil
-        // 遍历所有local pool
+		allPools[i] = nil
+		// 遍历所有local pool
 		for i := 0; i < int(p.localSize); i++ {
 			l := indexLocal(p.local, i)
 			l.private = nil

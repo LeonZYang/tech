@@ -77,11 +77,11 @@ func (server *Server) RegisterName(name string, rcvr interface{}) error {
 ##### register
 ```go
 func (server *Server) register(rcvr interface{}, name string, useName bool) error {
-    s := new(service) 
-    // 获取rvr的type和value
+	s := new(service) 
+	// 获取rvr的type和value
 	s.typ = reflect.TypeOf(rcvr)
-    s.rcvr = reflect.ValueOf(rcvr)
-    // 解析名称，如果useName为true，则使用name
+	s.rcvr = reflect.ValueOf(rcvr)
+	// 解析名称，如果useName为true，则使用name
 	sname := reflect.Indirect(s.rcvr).Type().Name()
 	if useName {
 		sname = name
@@ -90,8 +90,8 @@ func (server *Server) register(rcvr interface{}, name string, useName bool) erro
 		s := "rpc.Register: no service name for type " + s.typ.String()
 		log.Print(s)
 		return errors.New(s)
-    }
-    // 判断是否可导出
+	}
+	// 判断是否可导出
 	if !isExported(sname) && !useName {
 		s := "rpc.Register: type " + sname + " is not exported"
 		log.Print(s)
@@ -101,7 +101,7 @@ func (server *Server) register(rcvr interface{}, name string, useName bool) erro
 
 	// 注册方法
 	s.method = suitableMethods(s.typ, true)
-    // 如果方法为空
+	// 如果方法为空
 	if len(s.method) == 0 {
 		str := ""
 
@@ -115,7 +115,7 @@ func (server *Server) register(rcvr interface{}, name string, useName bool) erro
 		log.Print(str)
 		return errors.New(str)
 	}
-    // serviceMap 是个sync.Map, 如果名称冲突，则会报错
+	// serviceMap 是个sync.Map, 如果名称冲突，则会报错
 	if _, dup := server.serviceMap.LoadOrStore(sname, s); dup {
 		return errors.New("rpc: service already defined: " + sname)
 	}
@@ -144,8 +144,8 @@ func suitableMethods(typ reflect.Type, reportErr bool) map[string]*methodType {
 			}
 			continue
 		}
-  
-        // arg 可以不用是指针
+
+		// arg 可以不用是指针
 		argType := mtype.In(1)
 		if !isExportedOrBuiltinType(argType) {
 			if reportErr {
@@ -210,7 +210,7 @@ func (server *Server) ServeCodec(codec ServerCodec) {
 	sending := new(sync.Mutex)
 	wg := new(sync.WaitGroup)
 	for {
-        // 解码请求
+		// 解码请求
 		service, mtype, req, argv, replyv, keepReading, err := server.readRequest(codec)
 		if err != nil {
 			if debugLog && err != io.EOF {
@@ -240,7 +240,7 @@ func (server *Server) ServeCodec(codec ServerCodec) {
 readRequest 解码请求
 ```go
 func (server *Server) readRequest(codec ServerCodec) (service *service, mtype *methodType, req *Request, argv, replyv reflect.Value, keepReading bool, err error) {
-    // 如果keepReading为true，如果有报错，会将这个request丢弃，然后执行下一个
+	// 如果keepReading为true，如果有报错，会将这个request丢弃，然后执行下一个
 	service, mtype, req, keepReading, err = server.readRequestHeader(codec)
 	if err != nil {
 		if !keepReading {
@@ -252,8 +252,8 @@ func (server *Server) readRequest(codec ServerCodec) (service *service, mtype *m
 	}
 
 	// argv是否是值(非指针)
-    argIsValue := false // if true, need to indirect before calling.
-    // 将ArgType强制转为指针
+	argIsValue := false // if true, need to indirect before calling.
+	// 将ArgType强制转为指针
 	if mtype.ArgType.Kind() == reflect.Ptr {
 		argv = reflect.New(mtype.ArgType.Elem())
 	} else {
@@ -261,7 +261,7 @@ func (server *Server) readRequest(codec ServerCodec) (service *service, mtype *m
 		argIsValue = true
 	}
 
-    // argv 现在是一个指针
+	// argv 现在是一个指针
 	if err = codec.ReadRequestBody(argv.Interface()); err != nil {
 		return
 	}
@@ -269,7 +269,7 @@ func (server *Server) readRequest(codec ServerCodec) (service *service, mtype *m
 		argv = argv.Elem()
 	}
 
-    // ReplyType 肯定是指针
+	// ReplyType 肯定是指针
 	replyv = reflect.New(mtype.ReplyType.Elem())
 
 	switch mtype.ReplyType.Elem().Kind() {
@@ -289,8 +289,8 @@ func (server *Server) readRequest(codec ServerCodec) (service *service, mtype *m
 ```go
 func (server *Server) readRequestHeader(codec ServerCodec) (svc *service, mtype *methodType, req *Request, keepReading bool, err error) {
 	// 新建或者获取空闲的Request
-    req = server.getRequest()
-    // 解码请求
+	req = server.getRequest()
+	// 解码请求
 	err = codec.ReadRequestHeader(req)
 	if err != nil {
 		req = nil
@@ -301,28 +301,28 @@ func (server *Server) readRequestHeader(codec ServerCodec) (svc *service, mtype 
 		return
 	}
 
-    // 读取成功， 如果有错误，跳过到下一个请求
+	// 读取成功， 如果有错误，跳过到下一个请求
 	keepReading = true
 
-    // 获取最后一个.的索引
+	// 获取最后一个.的索引
 	dot := strings.LastIndex(req.ServiceMethod, ".")
 	if dot < 0 {
 		err = errors.New("rpc: service/method request ill-formed: " + req.ServiceMethod)
 		return
-    }
-    // 服务名称
-    serviceName := req.ServiceMethod[:dot]
-    // 方法名称
+	}
+	// 服务名称
+	serviceName := req.ServiceMethod[:dot]
+	// 方法名称
 	methodName := req.ServiceMethod[dot+1:]
 
-    // 获取请求
+	// 获取请求
 	svci, ok := server.serviceMap.Load(serviceName)
 	if !ok {
 		err = errors.New("rpc: can't find service " + req.ServiceMethod)
 		return
 	}
-    svc = svci.(*service)
-    // 获取methodType
+	svc = svci.(*service)
+	// 获取methodType
 	mtype = svc.method[methodName]
 	if mtype == nil {
 		err = errors.New("rpc: can't find method " + req.ServiceMethod)
@@ -349,8 +349,8 @@ func (s *service) call(server *Server, sending *sync.Mutex, wg *sync.WaitGroup, 
 	errmsg := ""
 	if errInter != nil {
 		errmsg = errInter.(error).Error()
-    }
-    // 发送响应
+	}
+	// 发送响应
 	server.sendResponse(sending, req, replyv.Interface(), codec, errmsg)
 	server.freeRequest(req)
 }
@@ -360,7 +360,7 @@ func (s *service) call(server *Server, sending *sync.Mutex, wg *sync.WaitGroup, 
 发送响应
 ```go
 func (server *Server) sendResponse(sending *sync.Mutex, req *Request, reply interface{}, codec ServerCodec, errmsg string) {
-    // 新建或者获取个response
+	// 新建或者获取个response
 	resp := server.getResponse()
 
 	resp.ServiceMethod = req.ServiceMethod
@@ -369,14 +369,14 @@ func (server *Server) sendResponse(sending *sync.Mutex, req *Request, reply inte
 		reply = invalidRequest
 	}
 	resp.Seq = req.Seq
-    sending.Lock()
-    // 编码response, gobServerCodec.WriteResponse
+	sending.Lock()
+	// 编码response, gobServerCodec.WriteResponse
 	err := codec.WriteResponse(resp, reply)
 	if debugLog && err != nil {
 		log.Println("rpc: writing response:", err)
 	}
-    sending.Unlock()
-    // 将freeResponse放回freeList
+	sending.Unlock()
+	// 将freeResponse放回freeList
 	server.freeResponse(resp)
 }
 ```
@@ -497,48 +497,48 @@ func (client *Client) input() {
 	var err error
 	var response Response
 	for err == nil {
-        response = Response{}
-        // 读取响应头
+		response = Response{}
+		// 读取响应头
 		err = client.codec.ReadResponseHeader(&response)
 		if err != nil {
 			break
 		}
 		seq := response.Seq
-        client.mutex.Lock()
-        // 根据seq获取对应的Call
-        call := client.pending[seq]
-        // 删除对应的key
+		client.mutex.Lock()
+		// 根据seq获取对应的Call
+		call := client.pending[seq]
+		// 删除对应的key
 		delete(client.pending, seq)
 		client.mutex.Unlock()
 
 		switch {
-        case call == nil:
-            // 没有等待响应的请求，这种情况下WriteRequest请求部分失败，call已经被删除，这种情况下我们仍然需要读取错误的body
+		case call == nil:
+			// 没有等待响应的请求，这种情况下WriteRequest请求部分失败，call已经被删除，这种情况下我们仍然需要读取错误的body
 			err = client.codec.ReadResponseBody(nil)
 			if err != nil {
 				err = errors.New("reading error body: " + err.Error())
 			}
 		case response.Error != "":
-            // 捕获错误
+			// 捕获错误
 			call.Error = ServerError(response.Error)
 			err = client.codec.ReadResponseBody(nil)
 			if err != nil {
 				err = errors.New("reading error body: " + err.Error())
-            }
-            // 结束
+			}
+			// 结束
 			call.done()
-        default:
-            // 解码reply
+		default:
+			// 解码reply
 			err = client.codec.ReadResponseBody(call.Reply)
 			if err != nil {
 				call.Error = errors.New("reading body " + err.Error())
-            }
-            // 结束
+			}
+			// 结束
 			call.done()
 		}
 	}
 
-    // 将等待调用的停止
+	// 将等待调用的停止
 	client.reqMutex.Lock()
 	client.mutex.Lock()
 	client.shutdown = true
@@ -549,8 +549,8 @@ func (client *Client) input() {
 		} else {
 			err = io.ErrUnexpectedEOF
 		}
-    }  
-    // 批量结束
+	}  
+	// 批量结束
 	for _, call := range client.pending {
 		call.Error = err
 		call.done()
@@ -573,10 +573,10 @@ func (client *Client) Go(serviceMethod string, args interface{}, reply interface
 	call.Reply = reply
 	// done 这里不要使用无缓存的chan
 	if done == nil {
-        // 有缓存的chan
+		// 有缓存的chan
 		done = make(chan *Call, 10) // buffered.
 	} else {
-        // 如果done不为nil, done必须有足够的缓存去容纳同时发生RPC调用
+		// 如果done不为nil, done必须有足够的缓存去容纳同时发生RPC调用
 		if cap(done) == 0 {
 			log.Panic("rpc: done channel is unbuffered")
 		}

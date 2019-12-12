@@ -94,32 +94,31 @@ gc_trigger是触发gc的值，在gcSetTriggerRatio中计算，初始值是7 / 8.
 gcpercent和Golang里的一个环境变量有关，GOGC，默认是100，意思是live heap size 自上次垃圾回收后，增长1倍GC触发运行，gcpercent 默认也是100
  gcController.endCycle()
 ```go
-    // 触发比例
+	// 触发比例
 	const triggerGain = 0.5
 
-    // 目标heap增长率，默认是1.0
-    goalGrowthRatio := float64(gcpercent) / 100
-    // 实际heap增长率， 总大小 / (上一次GC标记的bytes) - 1
-    actualGrowthRatio := float64(memstats.heap_live)/float64(memstats.heap_marked) - 1
-    // GC标记阶段时间
+	// 目标heap增长率，默认是1.0
+	goalGrowthRatio := float64(gcpercent) / 100
+	// 实际heap增长率， 总大小 / (上一次GC标记的bytes) - 1
+	actualGrowthRatio := float64(memstats.heap_live)/float64(memstats.heap_marked) - 1
+	// GC标记阶段时间
 	assistDuration := nanotime() - c.markStartTime
 
 	// GC标记阶段CPU使用率，0.25
 	utilization := gcBackgroundUtilization
-    // Add assist utilization; avoid divide by zero.
-  
+	// Add assist utilization; avoid divide by zero.
+
 	if assistDuration > 0 {
-        // assistTime 是G辅助GC标记对象所使用的时间总和
-        // utilization += 辅助gc标记总时间/ GC标记时间*CPU个数
+		// assistTime 是G辅助GC标记对象所使用的时间总和
+		// utilization += 辅助gc标记总时间/ GC标记时间*CPU个数
 		utilization += float64(c.assistTime) / float64(assistDuration*int64(gomaxprocs))
 	}
 
-    // 
+	// 
 	triggerError := goalGrowthRatio - memstats.triggerRatio - utilization/gcGoalUtilization*(actualGrowthRatio-memstats.triggerRatio)
 
-    // 渐进式调整，每次只调整一半的值
+	// 渐进式调整，每次只调整一半的值
 	triggerRatio := memstats.triggerRatio + triggerGain*triggerError
-
 }
 ```
 
@@ -204,7 +203,7 @@ func gcStart(trigger gcTrigger) {
 		sweep.nbgsweep++
 	}
 
-    // 加锁
+	// 加锁
 	semacquire(&work.startSema)
 	// 检测是否触发gc
 	if !trigger.test() {
@@ -212,7 +211,7 @@ func gcStart(trigger gcTrigger) {
 		return
 	}
 
-    // 检查是否强制触发gc
+	// 检查是否强制触发gc
 	work.userForced = trigger.kind == gcTriggerAlways || trigger.kind == gcTriggerCycle
 
 	// 判断是否禁止了并行gc
@@ -223,7 +222,7 @@ func gcStart(trigger gcTrigger) {
 		mode = gcForceBlockMode
 	}
 
-    // Ok, we're doing it! Stop everybody else
+	// Ok, we're doing it! Stop everybody else
 	semacquire(&worldsema)
 
 	if trace.enabled {
@@ -238,12 +237,12 @@ func gcStart(trigger gcTrigger) {
 		}
 	}
 
-    // 启动后台扫描任务
+	// 启动后台扫描任务
 	gcBgMarkStartWorkers()
 
-    // 重置标记状态
+	// 重置标记状态
 	gcResetMarkState()
-    // 重置参数
+	// 重置参数
 	work.stwprocs, work.maxprocs = gomaxprocs, gomaxprocs
 	if work.stwprocs > ncpu {
 		// This is used to compute CPU time of the STW phases,
@@ -253,28 +252,28 @@ func gcStart(trigger gcTrigger) {
 	work.heap0 = atomic.Load64(&memstats.heap_live)
 	work.pauseNS = 0
 	work.mode = mode
-    // 记录开始时间
+	// 记录开始时间
 	now := nanotime()
 	work.tSweepTerm = now
 	work.pauseStart = now
 	if trace.enabled {
 		traceGCSTWStart(1)
-    }
-    
-    // STOP THE WORLD
+	}
+
+	// STOP THE WORLD
 	systemstack(stopTheWorldWithSema)
 
-    // 并发扫描前确认已经完成gc标记
+	// 并发扫描前确认已经完成gc标记
 	systemstack(func() {
 		finishsweep_m()
 	})
 
-    // clear sched.sudogcache和sched.deferpool
+	// clear sched.sudogcache和sched.deferpool
 	clearpools()
 
 	work.cycles++
 
-    // 开启新一轮gc前重置gcController
+	// 开启新一轮gc前重置gcController
 	gcController.startCycle()
 	work.heapGoal = memstats.next_gc
 
@@ -285,19 +284,19 @@ func gcStart(trigger gcTrigger) {
 		schedEnableUser(false)
 	}
 
-    // 进入并发标记阶段，开启写屏障
+	// 进入并发标记阶段，开启写屏障
 	setGCPhase(_GCmark)
 
-    // 重置后台标记任务的计数器(nproc, nwait)
-    gcBgMarkPrepare()
-    
-    // 计算扫描根对象的任务数量
+	// 重置后台标记任务的计数器(nproc, nwait)
+	gcBgMarkPrepare()
+
+	// 计算扫描根对象的任务数量
 	gcMarkRootPrepare()
 
 	// 标记所有活动的tiny 
 	gcMarkTinyAllocs()
 
-    // 启动辅助gc
+	// 启动辅助gc
 	atomic.Store(&gcBlackenEnabled, 1)
 
 	// 标记开始的时间
@@ -305,19 +304,19 @@ func gcStart(trigger gcTrigger) {
 
 	// 并发标记
 	systemstack(func() {
-        // START THE WORLD
-        // 标记已经在进行
-        now = startTheWorldWithSema(trace.enabled)
-        // 记录停止了多久
+		// START THE WORLD
+		// 标记已经在进行
+		now = startTheWorldWithSema(trace.enabled)
+		// 记录停止了多久
 		work.pauseNS += now - work.pauseStart
 		work.tMark = now
 	})
 
-    // STW模式下，block
+	// STW模式下，block
 	if mode != gcBackgroundMode {
 		Gosched()
 	}
-    
+
 	semrelease(&work.startSema)
 }
 ```

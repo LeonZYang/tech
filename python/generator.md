@@ -48,8 +48,40 @@ print(next(f))
 ```
 首先我们先调用send初始化生成器，然后再`send("ok")`, 会将x进行覆盖，然后传给r，最后返回的就是"ok"
 
-#### 生成器返回值
+#### 协程状态
+`GEN_CREATE` 等待开始执行
+`GEN_RUNNING` 解释器正在执行
+`GEN_SUSPENDED` 在yield表达式处暂停
+`GEN_CLOSED` 执行结束
+使用`inspect.getgeneratorstat(generator)`可以查看
 
+```python
+from inspect import getgeneratorstate
+
+def md():
+    yield 1
+    yield 2
+
+
+m = md()
+
+print(getgeneratorstate(m))  # GEN_CREATED
+
+m.send(None)
+
+print(getgeneratorstate(m))  # GEN_SUSPENDED
+
+m.send('A')
+
+print(getgeneratorstate(m))  # GEN_SUSPENDED
+
+try:
+    m.send('B')
+except:
+    pass
+
+print(getgeneratorstate(m))  # GEN_CLOSED
+```
 
 #### yield from
 yield from是[pep380](https://www.python.org/dev/peps/pep-0380/)后加入的，可以将一个可迭代对象直接转为生成器

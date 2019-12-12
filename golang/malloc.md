@@ -159,7 +159,7 @@ type mspan struct {
 
 	manualFreeList gclinkptr // list of free objects in mSpanManual spans
 
-    // 定位下一个空闲的object， 范围在0~nelems
+	// 定位下一个空闲的object， 范围在0~nelems
 	freeindex uintptr
 	// object的数量
 	nelems uintptr // number of object in the span.
@@ -167,7 +167,7 @@ type mspan struct {
 	// 缓存freeindex开始的bitmap， allocCache是allocBits的补码
 	allocCache uint64
 
-    // 分配位图，每一位代表是否已分配
+	// 分配位图，每一位代表是否已分配
 	allocBits  *gcBits
 
 	// 用于在gc的时候标记哪些对象存活，每次GC后gcmarkBits变成allocBits
@@ -176,8 +176,8 @@ type mspan struct {
 	sweepgen    uint32
 	divMul      uint16     // for divide by elemsize - divMagic.mul
 	baseMask    uint16     // if non-0, elemsize is a power of 2, & this will get object allocation base
-    // 已分配的object数量
-    allocCount  uint16     // number of allocated objects
+	// 已分配的object数量
+	allocCount  uint16     // number of allocated objects
 	spanclass   spanClass  // size class and noscan (uint8)
 	state       mSpanState // mspaninuse etc
 	needzero    uint8      // needs to be zeroed before allocation

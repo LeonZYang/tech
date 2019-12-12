@@ -37,13 +37,13 @@ cancelCtx实现了取消，如果取消，那么children(实现了cancel)的也�
 type cancelCtx struct {
 	Context
 
-    // 锁
-    mu       sync.Mutex            // protects following fields
-    // 首次取消会close
-    done     chan struct{}         // created lazily, closed by first cancel call
-    // 首次cancel，会被设置成nil
-    children map[canceler]struct{} // set to nil by the first cancel call
-    // 首次取消是个非nil的error·
+	// 锁
+	mu       sync.Mutex            // protects following fields
+	// 首次取消会close
+	done     chan struct{}         // created lazily, closed by first cancel call
+	// 首次cancel，会被设置成nil
+	children map[canceler]struct{} // set to nil by the first cancel call
+	// 首次取消是个非nil的error·
 	err      error                 // set to non-nil by the first cancel call
 }
 
@@ -53,8 +53,8 @@ type cancelCtx struct {
 timerCtx内嵌了cancelCtx
 ```go
 type timerCtx struct {
-    cancelCtx
-    // 被cancelCtx lock保护
+	cancelCtx
+	// 被cancelCtx lock保护
 	timer *time.Timer // Under cancelCtx.mu.
 
 	deadline time.Time
@@ -129,7 +129,7 @@ WithValue返回一个关联key的context, key必须是个可比较得指针或�
 func WithValue(parent Context, key, val interface{}) Context {
 	if key == nil {
 		panic("nil key")
-    }
+	}
 	if !reflect.TypeOf(key).Comparable() {
 		panic("key is not comparable")
 	}
@@ -149,7 +149,7 @@ func propagateCancel(parent Context, child canceler) {
 	if p, ok := parentCancelCtx(parent); ok {
 		p.mu.Lock()
 		if p.err != nil {
-            // parent 已经关闭了
+			// parent 已经关闭了
 			child.cancel(false, p.err)
 		} else {
 			if p.children == nil {
@@ -160,7 +160,7 @@ func propagateCancel(parent Context, child canceler) {
 		p.mu.Unlock()
 	} else {
 		go func() {
-            // 启动监听parent和child的goroutine
+			// 启动监听parent和child的goroutine
 			select {
 			case <-parent.Done():
 				child.cancel(false, parent.Err())

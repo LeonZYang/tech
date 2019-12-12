@@ -30,37 +30,37 @@ type g struct {
 	// It is stack.lo+StackGuard on g0 and gsignal stacks.
     // It is ~0 on other goroutine stacks, to trigger a call to morestackc (and crash).
     
-    // 当前g使用的栈空间，栈结构包含两个成员lo和hi
-    stack       stack   // offset known to runtime/cgo
-    // 检测栈是否需要扩展，用Go实现
-    stackguard0 uintptr // offset known to liblink
-    // 检测栈是否需要扩展，用C实现
+	// 当前g使用的栈空间，栈结构包含两个成员lo和hi
+	stack       stack   // offset known to runtime/cgo
+	// 检测栈是否需要扩展，用Go实现
+	stackguard0 uintptr // offset known to liblink
+	// 检测栈是否需要扩展，用C实现
 	stackguard1 uintptr // offset known to liblink
-    // 最内层的Panic
-    _panic         *_panic // innermost panic - offset known to liblink
-    // 最内层的dfer
-    _defer         *_defer // innermost defer
-    // 当前所绑定的M
-    m              *m      // current m; offset known to arm liblink
-    // 当前g的调度数据，当goroutine切换时，保留当前g的上下文，用于恢复g
-    sched          gobuf
-    
+	// 最内层的Panic
+	_panic         *_panic // innermost panic - offset known to liblink
+	// 最内层的dfer
+	_defer         *_defer // innermost defer
+	// 当前所绑定的M
+	m              *m      // current m; offset known to arm liblink
+	// 当前g的调度数据，当goroutine切换时，保留当前g的上下文，用于恢复g
+	sched          gobuf
+
 
 	syscallsp      uintptr        // if status==Gsyscall, syscallsp = sched.sp to use during gc
 	syscallpc      uintptr        // if status==Gsyscall, syscallpc = sched.pc to use during gc
 	stktopsp       uintptr        // expected sp at top of stack, to check in traceback
 	param          unsafe.Pointer // 传递唤醒参数
-    
-    // 当前g的状态
+
+	// 当前g的状态
 	atomicstatus   uint32
-    stackLock      uint32 // sigprof/scang lock; TODO: fold in to atomicstatus
-    // 当前g的id
-    goid           int64
-    // 下一个g的地址，通过guintptr
+	stackLock      uint32 // sigprof/scang lock; TODO: fold in to atomicstatus
+	// 当前g的id
+	goid           int64
+	// 下一个g的地址，通过guintptr
 	schedlink      guintptr
 	waitsince      int64      // 当前g阻塞的时间
-    waitreason     waitReason // 当前g被阻塞的原因，当前g处在Gwaiting
-    // 是否抢占
+	waitreason     waitReason // 当前g被阻塞的原因，当前g处在Gwaiting
+	// 是否抢占
 	preempt        bool       // preemption signal, duplicates stackguard0 = stackpreempt
 	paniconfault   bool       // panic (instead of crash) on unexpected fault address
 	preemptscan    bool       // 被强占是否进行gc

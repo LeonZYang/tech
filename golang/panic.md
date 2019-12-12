@@ -35,25 +35,25 @@ func main(){
 
 ```go
 func gopanic(e interface{}) {
-    gp := getg()     // 获取当前goroutine的指针
-    //...
-    
-    var p _panic           // 定义了个_panic的结构体
+	gp := getg()     // 获取当前goroutine的指针
+	//...
+
+	var p _panic           // 定义了个_panic的结构体
 	p.arg = e      
 	p.link = gp._panic  
 	gp._panic = (*_panic)(noescape(unsafe.Pointer(&p)))
 
 	atomic.Xadd(&runningPanicDefers, 1)
 
-    // 处理所有的defer 
+	// 处理所有的defer 
 	for {
 		d := gp._defer       // 获取defer，如果没有则退出
 		if d == nil {
 			break
 		}
 
-        // 如果defer 被上一个panic或者goexit 触发，那么这里会触发一个新的panic
-        // 之前的painc的会标记为中止
+		// 如果defer 被上一个panic或者goexit 触发，那么这里会触发一个新的panic
+		// 之前的painc的会标记为中止
 		if d.started {
 			if d._panic != nil {
 				d._panic.aborted = true
@@ -65,15 +65,15 @@ func gopanic(e interface{}) {
 			continue
 		}
 
-        // 将defer标记为start
+		// 将defer标记为start
 		d.started = true
 
-        // 将defer的_panic标记为本次panic，如果后面出现新的panic（对应上面那个if函数 d.started），那么会找到本次panic，并且将其标记为中止
+		// 将defer的_panic标记为本次panic，如果后面出现新的panic（对应上面那个if函数 d.started），那么会找到本次panic，并且将其标记为中止
 		d._panic = (*_panic)(noescape(unsafe.Pointer(&p)))
 
-        p.argp = unsafe.Pointer(getargp(0))
-        
-        // 调用defer函数
+		p.argp = unsafe.Pointer(getargp(0))
+		
+		// 调用defer函数
 		reflectcall(nil, unsafe.Pointer(d.fn), deferArgs(d), uint32(d.siz), uint32(d.siz))
 		p.argp = nil
 
@@ -90,22 +90,22 @@ func gopanic(e interface{}) {
 
 		pc := d.pc
 		sp := unsafe.Pointer(d.sp) // must be pointer so it gets adjusted during stack copy
-        freedefer(d)
-        
+		freedefer(d)
+		
 		if p.recovered {
-            // 处理recovery
+			// 处理recovery
 			atomic.Xadd(&runningPanicDefers, -1)
 
 			gp._panic = p.link
-            // 如果panic 被中止掉，那么从链表中将其删除
+			// 如果panic 被中止掉，那么从链表中将其删除
 			for gp._panic != nil && gp._panic.aborted {
 				gp._panic = gp._panic.link
 			}
 			if gp._panic == nil { // must be done with signal
 				gp.sig = 0
 			}
- 
-            // 将堆栈信息传输给recovery
+
+			// 将堆栈信息传输给recovery
 			gp.sigcode0 = uintptr(sp)
 			gp.sigcode1 = pc
 			mcall(recovery)
