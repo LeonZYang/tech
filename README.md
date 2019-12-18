@@ -22,6 +22,8 @@
 * [深入理解context](golang/context.md)
 * [深入理解RPC](golang/rpc.md)
 * [深入理解HTTP Client](golang/http_client.md)
+* [深入理解io](golang/io.md)
+* [深入理解bufio](golang/bufio.md)
 
 ### 即将到来
 * go程序启动
