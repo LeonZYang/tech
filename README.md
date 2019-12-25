@@ -37,12 +37,13 @@
 * [理解装饰器](python/decorator.md)
 * [理解生成器](python/generator.md)
 * [理解迭代器](python/decorator.md)
+* [slots](python/slots.md)
+* [单例模式](python/singleton.md)
 
 ### 即将到来
 * 元编程
-* 迭代器
 * async和await
 * 类的继承
-* 单例函数
 * 工厂函数
+* weakfor
 
