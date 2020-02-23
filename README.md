@@ -24,13 +24,14 @@
 * [深入理解HTTP Client](golang/http_client.md)
 * [深入理解io](golang/io.md)
 * [深入理解bufio](golang/bufio.md)
+* [深入理解time](golang/time.md)
 
 ### 即将到来
 * go程序启动
 * runtime
 * interface
-* http
 * gRPC
+* go Module
 
 ## Python
 

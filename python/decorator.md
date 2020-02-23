@@ -215,7 +215,7 @@ print(Demo.value)    # 2
 ```python
 class Demo():
     @staticmethod
-    def get_value(cls):
+    def get_value():
         return "ok"
 
 print(Demo.get_value())  # ok
