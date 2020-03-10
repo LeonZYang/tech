@@ -26,6 +26,9 @@
 * [深入理解bufio](golang/bufio.md)
 * [深入理解time](golang/time.md)
 
+### Go优化
+* [深入理解边界值消除](golang/bce.md)
+
 ### 即将到来
 * go程序启动
 * runtime
