@@ -25,7 +25,7 @@
 * [深入理解io](golang/io.md)
 * [深入理解bufio](golang/bufio.md)
 * [深入理解time](golang/time.md)
-* [深入理解go程序运行和编译](golang/gobuold.md)
+* [深入理解go程序运行和编译](golang/gobuild.md)
 
 ### Go优化
 * [深入理解边界值消除](golang/bce.md)
