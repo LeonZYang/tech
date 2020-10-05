@@ -13,7 +13,7 @@
 
 缺点：
 1. 需要维护计数资源
-2. 循环医用
+2. 循环使用
 
 #### 标记清除
 通过标记垃圾对象，然后进行清除， Golang的三色标记法就是这一种
@@ -38,7 +38,6 @@
 1.6| 2016.2|1.5中一些与并发GC不协调的地方更改. 集中式的GC协调协程, 改为状态机实现|5-20ms|
 1.7| 2016.8|GC时栈收缩改为并发, span中对象分配状态由freelist改为bitmap|1-3ms左右|
 1.8| 2017.2|hybird write barrier, 消除了stw中的重新扫描栈|sub ms|Golang GC进入Sub ms时代，hybrid write barrier
-1.12| 2013.5|STW|秒级|
 
 
 ### Stop The World

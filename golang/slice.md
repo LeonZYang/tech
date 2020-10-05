@@ -167,7 +167,7 @@ func slicecopy(to, fm slice, width uintptr) int {
     fmt.Println(a) // [0, 0, 0, 1]
     fmt.Println(b) // [1]  
 ```
-make 第二个参数是len，第三个参数是cap，如果不穿第三个参数，那么cap = len，所以就会有下面的输出
+make 第二个参数是len，第三个参数是cap，如果不传第三个参数，那么cap = len，所以就会有下面的输出
 
 
 ### 其他
